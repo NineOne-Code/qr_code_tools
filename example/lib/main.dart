@@ -16,8 +16,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final picker = ImagePicker();
-  String _qrcodeFile = '';
-  String _data = '';
+  String? _qrcodeFile;
+  String? _data;
 
   @override
   void initState() {
@@ -56,11 +56,11 @@ class _MyAppState extends State<MyApp> {
         body: Center(
           child: Column(
             children: <Widget>[
-              _qrcodeFile.isEmpty
+              _qrcodeFile?.isEmpty ?? true
                   ? Image.asset(
                       'images/1559788943.png',
                     )
-                  : Image.file(File(_qrcodeFile)),
+                  : Image.file(File(_qrcodeFile!)),
               ElevatedButton(
                 child: Text("Select file"),
                 onPressed: _getPhotoByGallery,
@@ -74,12 +74,12 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _getPhotoByGallery() {
-    Stream.fromFuture(picker.getImage(source: ImageSource.gallery))
+    Stream.fromFuture(picker.pickImage(source: ImageSource.gallery))
         .flatMap((file) {
       setState(() {
-        _qrcodeFile = file.path;
+        _qrcodeFile = file?.path;
       });
-      return Stream.fromFuture(QrCodeToolsPlugin.decodeFrom(file.path));
+      return Stream.fromFuture(QrCodeToolsPlugin.decodeFrom(file?.path));
     }).listen((data) {
       setState(() {
         _data = data;
